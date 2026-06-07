@@ -13,12 +13,10 @@ public class Athlete {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  // Связь 1 к 1 с таблицей User
   @OneToOne
   @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
   private User user;
 
-  // Связь Многие (Атлеты) к Одному (Тренеру)
   @ManyToOne
   @JoinColumn(name = "trainer_id")
   private Trainer trainer;

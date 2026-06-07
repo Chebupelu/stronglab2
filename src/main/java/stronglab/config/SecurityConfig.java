@@ -44,13 +44,11 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
-        // 5. Подключаем ваш кастомный JWT фильтр проверки токенов
         //http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // Бин с правилами для CORS (разрешаем запросы со всех адресов и методов)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

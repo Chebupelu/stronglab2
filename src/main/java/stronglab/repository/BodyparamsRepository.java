@@ -12,10 +12,8 @@ import java.util.Optional;
 
 public interface BodyparamsRepository extends JpaRepository<Bodyparams, Long> {
 
-    // Находит запись атлета за конкретное число (нужно для проверки дубликатов в один день)
     Optional<Bodyparams> findByAthleteIdAndDate(Long athleteId, LocalDate date);
 
-    // Получить всю историю измерений атлета (для графиков)
     List<Bodyparams> findAllByAthleteIdOrderByDateAsc(Long athleteId);
     @Query("SELECT b FROM Bodyparams b WHERE b.athlete.id = :athleteId ORDER BY b.date desc")
     List<Bodyparams> findByAthleteIdOrderByDateDesc(@Param("athleteId") Long athleteId);

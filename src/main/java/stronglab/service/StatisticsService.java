@@ -29,16 +29,12 @@ public class StatisticsService {
     public StatisticsDto getStatistics(Long athleteId) {
         StatisticsDto dto = new StatisticsDto();
 
-        // Получаем все тренировки атлета
         List<Workoutplan> workouts = workoutRepository.findByAthleteId(athleteId);
 
-        // 1. Ключевая статистика
         dto.setKeyStats(calculateKeyStats(workouts));
 
-        // 2. Персональные рекорды
         dto.setPersonalRecords(getPersonalRecords(workouts));
 
-        // 3. Цели с прогрессом
         List<Goal> goals = goalRepository.findByAthleteId(athleteId);
         dto.setGoals(getGoalsWithProgress(goals, workouts));
 
@@ -48,20 +44,16 @@ public class StatisticsService {
     private KeyStatsDto calculateKeyStats(List<Workoutplan> workouts) {
         KeyStatsDto stats = new KeyStatsDto();
 
-        // Общее количество тренировок
         stats.setTotalWorkouts(workouts.size());
 
-        // Количество выполненных тренировок
         long completedCount = workouts.stream()
                 .filter(w -> Boolean.TRUE.equals(w.getIsCompleted()))
                 .count();
         stats.setCompletedWorkouts((int) completedCount);
 
-        // Процент выполнения
         stats.setCompletionPercent(stats.getTotalWorkouts() > 0 ?
                 (int) (completedCount * 100 / stats.getTotalWorkouts()) : 0);
 
-        // 🔥 Исправлено: totalTonnenage (calculatedLoad может быть null, так как Double)
         double totalTonnenage = workouts.stream()
                 .mapToDouble(w -> {
                     Double load = w.getCalculatedLoad();
@@ -70,19 +62,16 @@ public class StatisticsService {
                 .sum();
         stats.setTotalTonnenage(totalTonnenage);
 
-        // 🔥 Исправлено: totalSets (sets — это int примитив, не может быть null)
         long totalSetsLong = workouts.stream()
-                .mapToLong(w -> w.getSets())  // ← убрали проверку на null
+                .mapToLong(w -> w.getSets())
                 .sum();
         stats.setTotalSets((int) totalSetsLong);
 
-        // 🔥 Исправлено: totalReps (reps — это int примитив, не может быть null)
         long totalRepsLong = workouts.stream()
-                .mapToLong(w -> w.getReps())  // ← убрали проверку на null
+                .mapToLong(w -> w.getReps())
                 .sum();
         stats.setTotalReps((int) totalRepsLong);
 
-        // Лучшее упражнение по весу (weight — это Double, может быть null)
         workouts.stream()
                 .filter(w -> w.getExerciseName() != null && w.getExerciseName() != null && w.getWeight() != null)
                 .max(Comparator.comparing(Workoutplan::getWeight))
@@ -119,8 +108,7 @@ public class StatisticsService {
 
                     dto.setExerciseName(entry.getKey());
                     dto.setMaxWeight(best.getWeight() != null ? best.getWeight() : 0.0);
-                    // 🔥 Исправлено: reps — это int примитив, не может быть null
-                    dto.setMaxReps((int) best.getReps());  // ← убрали проверку на null
+                    dto.setMaxReps((int) best.getReps());
                     dto.setAchievedDate(best.getWorkoutDate() != null ?
                             best.getWorkoutDate().toString() : null);
                     return dto;
@@ -130,7 +118,6 @@ public class StatisticsService {
     }
 
     private List<GoalProgressDto> getGoalsWithProgress(List<Goal> goals, List<Workoutplan> workouts) {
-        // Группируем тренировки по упражнениям и находим максимальный вес
         Map<String, Double> maxWeightByExercise = new HashMap<>();
 
         for (Workoutplan workout : workouts) {

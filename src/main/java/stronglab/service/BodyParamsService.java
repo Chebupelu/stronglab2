@@ -22,14 +22,13 @@ public class BodyParamsService {
     private AthlereRepository athleteRepository;
 
     public Bodyparams getLatestParams(Long athleteId) {
-        // 🔥 Исправлено: ищем по athlete_id (id таблицы athlete)
         Athlete athlete = athleteRepository.findById(athleteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Атлет не найден для athlete_id: " + athleteId));
 
         return bodyParamsRepository.findByAthleteIdOrderByDateDesc(athleteId)
                 .stream()
                 .findFirst()
-                .orElse(null); // возвращаем null, если параметров нет
+                .orElse(null);
     }
 
     public Bodyparams updateParams(Long athleteId, BodyParamsRequest request) {

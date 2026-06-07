@@ -14,17 +14,14 @@ public class LoginRequest {
     @Size(min = 4, message = "Пароль должен быть не менее 4 символов")
     private String password;
 
-    // Пустой конструктор (обязателен для работы библиотеки Jackson при десериализации JSON)
     public LoginRequest() {
     }
 
-    // Конструктор со всеми полями (удобен для тестов)
     public LoginRequest(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
-    // Геттеры и Сеттеры (Encapsulation)
     public String getEmail() {
         return email;
     }

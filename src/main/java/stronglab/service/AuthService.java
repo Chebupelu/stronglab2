@@ -33,11 +33,9 @@ public class AuthService {
 
     @Transactional
     public User registerUser(User user){
-        //проверка не занят ли email
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new RuntimeException("Пользователь с таким email уже существует");
         }
-        //сохраняем основного пользователя
         User saveUser = userRepository.save(user);
 
         if("ATHLETE".equalsIgnoreCase(saveUser.getRole())){
@@ -50,7 +48,6 @@ public class AuthService {
             trainerRepository.save(trainer);
         }
 
-        // Хэшируем пароль перед сохранением
         String encodedPassword = passwordEncoder.encode(user.getPasswordHash());
         user.setPasswordHash(encodedPassword);
 
@@ -61,7 +58,6 @@ public class AuthService {
         return userRepository.findByEmail(email)
                 .filter(user -> passwordEncoder.matches(rawPassword, user.getPasswordHash()))
                 .map(user -> {
-                    // Если пароль подошел, генерируем JWT-токен
                     String token = JWT.create()
                             .withSubject(user.getEmail())
                             .withClaim("role", user.getRole())
@@ -69,7 +65,6 @@ public class AuthService {
                             .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                             .sign(Algorithm.HMAC256(JWT_SECRET));
 
-                    // Возвращаем объект со всеми данными и токеном
                     return new AuthResponse(user.getId(), user.getEmail(), user.getRole(), token);
                 });
     }

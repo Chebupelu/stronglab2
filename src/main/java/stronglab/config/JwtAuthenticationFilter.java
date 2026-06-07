@@ -28,15 +28,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("=== JWT FILTER ===");
         System.out.println("Request URI: " + path);
 
-        // 🔥 Добавьте ВСЕ эндпоинты, которые не требуют JWT
         if (path.startsWith("/api/auth") ||
                 path.startsWith("/api/workouts") ||
-                path.startsWith("/api/profile") ||    // ← добавить
-                path.startsWith("/api/athletes")) {   // ← добавить
+                path.startsWith("/api/profile") ||
+                path.startsWith("/api/athletes")) {
 
             System.out.println("Skipping JWT check for: " + path);
 
-            // Опционально: если токен есть, всё равно проверим
             String header = request.getHeader("Authorization");
             if (header != null && header.startsWith("Bearer ")) {
                 String token = header.substring(7);
@@ -45,7 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .build()
                             .verify(token);
                     System.out.println("JWT valid for: " + decodedJWT.getSubject());
-                    // Устанавливаем аутентификацию
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(decodedJWT.getSubject(), null, Collections.emptyList());
                     SecurityContextHolder.getContext().setAuthentication(auth);
@@ -58,7 +55,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Для остальных эндпоинтов — обязательная проверка токена
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing token");

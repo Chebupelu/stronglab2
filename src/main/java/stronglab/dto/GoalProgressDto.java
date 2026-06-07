@@ -7,13 +7,13 @@ import java.util.Date;
 
 @Data
 public class GoalProgressDto {
-    private Long id;                     // ID цели
-    private String exerciseType;         // Тип упражнения (например, "Жим лёжа")
-    private double targetWeight;         // Целевой вес
-    private String isStatus;             // Статус: "ACTIVE", "ACHIEVED", "EXPIRED"
-    private Date deadline;               // Дедлайн
-    private double currentMaxWeight;     // Текущий максимальный вес (рассчитывается)
-    private double progressPercent;      // Процент прогресса (0-100)
+    private Long id;
+    private String exerciseType;
+    private double targetWeight;
+    private String isStatus;
+    private Date deadline;
+    private double currentMaxWeight;
+    private double progressPercent;
 
 
     private GoalProgressDto toGoalProgressDto(Goal goal, double currentMaxWeight) {

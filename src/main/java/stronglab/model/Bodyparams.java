@@ -39,11 +39,9 @@ public class Bodyparams {
       this.athlete = null;
       return;
     }
-    // Если объект еще не создан, инициализируем его
     if (this.athlete == null) {
       this.athlete = new Athlete();
     }
-    // Записываем ID внутрь объекта Athlete (убедитесь, что в классе Athlete есть метод setId)
     this.athlete.setId(athleteId);
   }
 }

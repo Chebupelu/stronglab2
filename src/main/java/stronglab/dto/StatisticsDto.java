@@ -5,9 +5,9 @@ import java.util.List;
 
 @Data
 public class StatisticsDto {
-    private List<GoalProgressDto> goals;           // Список целей с прогрессом
-    private KeyStatsDto keyStats;                  // Ключевая статистика
-    private List<PersonalRecordDto> personalRecords; // Персональные рекорды
+    private List<GoalProgressDto> goals;
+    private KeyStatsDto keyStats;
+    private List<PersonalRecordDto> personalRecords;
 
     private List<ExerciseProgressDto> exerciseProgress;
 }

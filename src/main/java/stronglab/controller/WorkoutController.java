@@ -30,11 +30,10 @@ public class WorkoutController {
     private AthlereRepository athlereRepository;
 
     @Autowired
-    private TrainerRepository trainerRepository; // Потребуется для поиска тренера
+    private TrainerRepository trainerRepository;
 
     @PostMapping("/add-athlete")
     public ResponseEntity<?> addAthleteToTrainer(@RequestParam String email, @RequestParam Long trainerId) {
-        // 1. Сначала ищем тренера в базе по его ID
         Trainer trainer = trainerRepository.findById(trainerId)
                 .orElse(null);
 
@@ -42,18 +41,14 @@ public class WorkoutController {
             return ResponseEntity.status(404).body("Тренер с таким ID не найден");
         }
 
-        // 2. Ищем пользователя (атлета) по его Email
         return userRepository.findByEmail(email).map(user -> {
 
-            // 3. Ищем существующую запись в таблице athlete по user_id
             Athlete athlete = athlereRepository.findByUserId(user.getId())
-                    .orElse(new Athlete()); // Если записи еще нет, создаем новый объект
+                    .orElse(new Athlete());
 
-            // 4. Заполняем связи объектами
             athlete.setUser(user);
-            athlete.setTrainer(trainer); // Передаем найденный объект Trainer (Lombok сеттер)
+            athlete.setTrainer(trainer);
 
-            // 5. Сохраняем атлета с обновленной привязкой
             athlereRepository.save(athlete);
 
             return ResponseEntity.ok("Атлет успешно привязан к тренеру!");
@@ -72,13 +67,12 @@ public class WorkoutController {
 
             Workoutplan plan = new Workoutplan();
             plan.setAthlete(athlete);
-            plan.setExerciseName(request.getExerciseName());      // НОВОЕ поле
+            plan.setExerciseName(request.getExerciseName());
             plan.setWorkoutDate(request.getWorkoutDate());
             plan.setSets(request.getSets());
             plan.setReps(request.getReps());
             plan.setWeight(request.getWeight());
 
-            // Рассчитываем нагрузку
             double calculatedLoad = request.getWeight() * request.getSets() * request.getReps();
             plan.setCalculatedLoad(calculatedLoad);
 
@@ -108,13 +102,11 @@ public class WorkoutController {
         //return  userRepository.findAll();
     }
 
-    // Метод для Атлета: получить свои тренировки
     @GetMapping("/athlete/{athleteId}")
     public List<Workoutplan> getMyWorkouts(@PathVariable Long athleteId) {
         return workoutRepository.findByAthleteId(athleteId);
     }
 
-    // Метод для Тренера (вызывается из WPF): назначить новую тренировку
     @PostMapping("/assign")
     public Workoutplan assignWorkout(@RequestBody Workoutplan newPlan) {
         newPlan.setIsCompleted(false);
@@ -122,7 +114,6 @@ public class WorkoutController {
         return workoutRepository.save(newPlan);
     }
 
-    // Обновление статуса (когда атлет нажал "Выполнить")
     @PatchMapping("/{id}/complete")
     public ResponseEntity<?> completeWorkout(@PathVariable Long id) {
         return workoutRepository.findById(id).map(plan -> {
