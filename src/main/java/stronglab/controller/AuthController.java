@@ -33,7 +33,7 @@ public class AuthController {
             user.setPasswordHash(request.password);
             user.setRole(request.role);
             user.setName(request.name);
-            
+
             String additionalInfo = "TRAINER".equalsIgnoreCase(request.role)
                     ? request.specialization
                     : request.fitness_level;

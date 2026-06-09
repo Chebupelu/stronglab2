@@ -3,6 +3,7 @@ package stronglab.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -24,6 +25,7 @@ public class User {
   @Column(nullable = false)
   private String role;
 
+  @CreationTimestamp
   @Column(name = "created_at", insertable = false, updatable = false)
   private Timestamp createdAt;
 
