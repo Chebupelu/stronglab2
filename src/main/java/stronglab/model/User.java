@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "\"User\"")
@@ -28,7 +29,7 @@ public class User {
 
   @CreationTimestamp
   @Column(name = "created_at", insertable = false, updatable = false)
-  private LocalDate createdAt;
+  private LocalDateTime createdAt;
 
   @Column(name = "\"Name\"")
   private String name;
