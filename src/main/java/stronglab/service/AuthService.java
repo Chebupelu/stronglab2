@@ -69,8 +69,19 @@ public class AuthService {
                             .withIssuedAt(new Date())
                             .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                             .sign(Algorithm.HMAC256(JWT_SECRET));
+                    
+                    Long profileId = -1L;
+                    if ("TRAINER".equalsIgnoreCase(user.getRole())) {
+                        profileId = trainerRepository.findByUserId(user.getId())
+                                .map(Trainer::getId)
+                                .orElse(-1L);
+                    } else if ("ATHLETE".equalsIgnoreCase(user.getRole())) {
+                        profileId = athlereRepository.findByUserId(user.getId())
+                                .map(Athlete::getId)
+                                .orElse(-1L);
+                    }
 
-                    return new AuthResponse(user.getId(), user.getEmail(), user.getRole(), token);
+                    return new AuthResponse(user.getId(), user.getEmail(), user.getRole(), token, profileId);
                 });
     }
 }
