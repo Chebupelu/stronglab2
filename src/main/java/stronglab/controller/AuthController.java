@@ -25,7 +25,6 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request){
         try {
@@ -33,8 +32,9 @@ public class AuthController {
             user.setEmail(request.email);
             user.setPasswordHash(request.password);
             user.setRole(request.role);
-
-            User savedUser = authService.registerUser(user);
+            user.setName(request.name);
+            
+            User savedUser = authService.registerUser(user, request.specialization);
 
             UserDTO response = new UserDTO(
                     savedUser.getId(),
@@ -47,6 +47,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest.getEmail(), loginRequest.getPassword())

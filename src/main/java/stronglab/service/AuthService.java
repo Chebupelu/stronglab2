@@ -28,30 +28,37 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private final String JWT_SECRET = "YourSuperSecretKeyForStrongLabApp2026"; // Секретный ключ (минимум 256 бит)
+    private final String JWT_SECRET = "YourSuperSecretKeyForStrongLabApp2026";
     private final long EXPIRATION_TIME = 86_400_000;
 
     @Transactional
-    public User registerUser(User user){
+    public User registerUser(User user, String specialization){
+        // 1. Проверяем уникальность email
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new RuntimeException("Пользователь с таким email уже существует");
         }
-        User saveUser = userRepository.save(user);
 
-        if("ATHLETE".equalsIgnoreCase(saveUser.getRole())){
-            Athlete athlete = new Athlete();
-            athlete.setUser(saveUser);
-            athlereRepository.save(athlete);
-        } else if ("TRAINER".equalsIgnoreCase(saveUser.getRole())) {
-            Trainer trainer = new Trainer();
-            trainer.setUser(saveUser);
-            trainerRepository.save(trainer);
-        }
-
+        // 2. ХЭШИРУЕМ ПАРОЛЬ СРАЗУ (до сохранения в БД!)
         String encodedPassword = passwordEncoder.encode(user.getPasswordHash());
         user.setPasswordHash(encodedPassword);
 
-        return userRepository.save(user);
+        // 3. Сохраняем пользователя (теперь у него есть сгенерированный ID)
+        User savedUser = userRepository.save(user);
+
+        // 4. Создаем дочерние сущности в зависимости от роли
+        if("ATHLETE".equalsIgnoreCase(savedUser.getRole())){
+            Athlete athlete = new Athlete();
+            athlete.setUser(savedUser);
+            athlereRepository.save(athlete);
+        } else if ("TRAINER".equalsIgnoreCase(savedUser.getRole())) {
+            Trainer trainer = new Trainer();
+            trainer.setUser(savedUser);
+            // Записываем специализацию, которую передали из контроллера
+            trainer.setSpecialization(specialization);
+            trainerRepository.save(trainer);
+        }
+
+        return savedUser;
     }
 
     public Optional<AuthResponse> login(String email, String rawPassword) {
