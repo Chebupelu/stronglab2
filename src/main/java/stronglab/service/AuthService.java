@@ -32,29 +32,27 @@ public class AuthService {
     private final long EXPIRATION_TIME = 86_400_000;
 
     @Transactional
-    public User registerUser(User user, String specialization){
+    public User registerUser(User user, String additionalInfo) {
         // 1. Проверяем уникальность email
         if(userRepository.findByEmail(user.getEmail()).isPresent()){
             throw new RuntimeException("Пользователь с таким email уже существует");
         }
 
-        // 2. ХЭШИРУЕМ ПАРОЛЬ СРАЗУ (до сохранения в БД!)
         String encodedPassword = passwordEncoder.encode(user.getPasswordHash());
         user.setPasswordHash(encodedPassword);
 
-        // 3. Сохраняем пользователя (теперь у него есть сгенерированный ID)
         User savedUser = userRepository.save(user);
 
-        // 4. Создаем дочерние сущности в зависимости от роли
-        if("ATHLETE".equalsIgnoreCase(savedUser.getRole())){
+        if ("ATHLETE".equalsIgnoreCase(savedUser.getRole())) {
             Athlete athlete = new Athlete();
             athlete.setUser(savedUser);
+            athlete.setFitnessLevel(additionalInfo);
             athlereRepository.save(athlete);
+
         } else if ("TRAINER".equalsIgnoreCase(savedUser.getRole())) {
             Trainer trainer = new Trainer();
             trainer.setUser(savedUser);
-            // Записываем специализацию, которую передали из контроллера
-            trainer.setSpecialization(specialization);
+            trainer.setSpecialization(additionalInfo);
             trainerRepository.save(trainer);
         }
 

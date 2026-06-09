@@ -24,5 +24,4 @@ public class Athlete {
   @Column(name = "fitness_level")
   private String fitnessLevel;
 
-
 }

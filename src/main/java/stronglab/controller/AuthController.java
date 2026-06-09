@@ -26,7 +26,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
             User user = new User();
             user.setEmail(request.email);
@@ -34,7 +34,11 @@ public class AuthController {
             user.setRole(request.role);
             user.setName(request.name);
             
-            User savedUser = authService.registerUser(user, request.specialization);
+            String additionalInfo = "TRAINER".equalsIgnoreCase(request.role)
+                    ? request.specialization
+                    : request.fitness_level;
+
+            User savedUser = authService.registerUser(user, additionalInfo);
 
             UserDTO response = new UserDTO(
                     savedUser.getId(),
@@ -43,7 +47,7 @@ public class AuthController {
                     savedUser.getName()
             );
             return ResponseEntity.ok(response);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }

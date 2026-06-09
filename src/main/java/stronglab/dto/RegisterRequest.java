@@ -6,4 +6,5 @@ public class RegisterRequest {
     public String role;
     public String name;
     public String specialization;
+    public String fitness_level;
 }
