@@ -69,7 +69,7 @@ public class AuthService {
                             .withIssuedAt(new Date())
                             .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                             .sign(Algorithm.HMAC256(JWT_SECRET));
-                    
+
                     Long profileId = -1L;
                     if ("TRAINER".equalsIgnoreCase(user.getRole())) {
                         profileId = trainerRepository.findByUserId(user.getId())

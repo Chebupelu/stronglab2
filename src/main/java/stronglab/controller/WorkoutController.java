@@ -11,6 +11,8 @@ import stronglab.repository.AthlereRepository;
 import stronglab.repository.TrainerRepository;
 import stronglab.repository.UserRepository;
 import stronglab.repository.WorkoutplanRepository;
+import stronglab.service.WorkoutWebSocketHandler;
+import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,6 +33,12 @@ public class WorkoutController {
 
     @Autowired
     private TrainerRepository trainerRepository;
+
+    @Autowired
+    private WorkoutWebSocketHandler webSocketHandler;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @PostMapping("/add-athlete")
     public ResponseEntity<?> addAthleteToTrainer(@RequestParam String email, @RequestParam Long trainerId) {
@@ -111,7 +119,19 @@ public class WorkoutController {
     public Workoutplan assignWorkout(@RequestBody Workoutplan newPlan) {
         newPlan.setIsCompleted(false);
         newPlan.setStatus("Назначено");
-        return workoutRepository.save(newPlan);
+
+        Workoutplan savedPlan = workoutRepository.save(newPlan);
+
+        try {
+            String json = objectMapper.writeValueAsString(savedPlan);
+            if (savedPlan.getAthlete() != null) {
+                webSocketHandler.sendWorkoutNotification(savedPlan.getAthlete().getId(), json);
+            }
+        } catch (Exception e) {
+            System.err.println("Не удалось отправить пуш через сокет: " + e.getMessage());
+        }
+
+        return savedPlan;
     }
 
     @PatchMapping("/{id}/complete")
