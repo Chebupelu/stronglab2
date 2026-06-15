@@ -11,6 +11,7 @@ import stronglab.repository.AthlereRepository;
 import stronglab.repository.GoalRepository;
 import stronglab.repository.WorkoutplanRepository;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +44,9 @@ public class GoalService {
         goal.setExerciseType(request.getExerciseType());
         goal.setTargetWeight(request.getTargetWeight());
         goal.setTargetReps(request.getTargetReps());
-        goal.setDeadline(java.sql.Date.valueOf(request.getDeadline()));
+        goal.setDeadline((request.getDeadline()));
         goal.setIsStatus("ACTIVE");
-        goal.setCreatedAt((java.sql.Date) new Date());
+        goal.setCreatedAt(LocalDate.now());
 
         return goalRepository.save(goal);
     }
