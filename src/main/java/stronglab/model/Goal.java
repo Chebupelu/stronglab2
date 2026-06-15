@@ -7,7 +7,8 @@ import java.sql.Date;
 
 @Entity
 @Table(name = "goal")
-@Getter @Setter
+@Getter
+@Setter
 public class Goal {
 
   @Id
@@ -24,8 +25,21 @@ public class Goal {
   @Column(name = "target_weight")
   private double targetWeight;
 
+  @Column(name = "target_reps")
+  private int targetReps;
+
+  @Column(name = "current_max_weight")
+  private double currentMaxWeight;
+
+  @Column(name = "current_max_reps")
+  private int currentMaxReps;
+
   @Column(name = "is_status")
   private String isStatus;
 
+  @Column(name = "deadline")
   private Date deadline;
+
+  @Column(name = "created_at")
+  private Date createdAt;
 }
