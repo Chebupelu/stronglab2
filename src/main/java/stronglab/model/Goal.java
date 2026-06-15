@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "goal")
@@ -39,7 +40,7 @@ public class Goal {
   private String isStatus;
 
   @Column(name = "deadline")
-  private LocalDate  deadline;
+  private LocalDate deadline;
 
   @Column(name = "created_at")
   private LocalDate createdAt;
