@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "goal")
@@ -38,8 +39,8 @@ public class Goal {
   private String isStatus;
 
   @Column(name = "deadline")
-  private Date deadline;
+  private LocalDate  deadline;
 
   @Column(name = "created_at")
-  private Date createdAt;
+  private LocalDate createdAt;
 }
